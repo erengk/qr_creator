@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:qr_creator/pages/auth/roles/admin.dart';
+import 'package:qr_creator/pages/auth/roles/employee.dart';
 import 'package:qr_creator/utils/customColors.dart';
 import 'package:qr_creator/service/auth_service.dart';
-import 'package:qr_creator/widgets/custom_text_button.dart';
 import 'package:qr_creator/utils/customTextStyle.dart';
 
 class LoginPage extends StatefulWidget {
@@ -46,25 +48,9 @@ class _LoginPageState extends State<LoginPage> {
                     customSizedBox(),
                     passwordTextField(),
                     customSizedBox(),
-                    forgotPasswordButton(),
                     customSizedBox(),
                     signInButton(),
                     customSizedBox(),
-                    CustomTextButton(
-                      onPressed: () => Navigator.pushNamed(context, "/signUp"),
-                      buttonText: "Create new Account",
-                    ),
-                    CustomTextButton(
-                        onPressed: () async {
-                          final result = await authService.signInAnonymous();
-                          if (result != null) {
-                            Navigator.pushReplacementNamed(
-                                context, "/homePage");
-                          } else {
-                            print("Error!");
-                          }
-                        },
-                        buttonText: "Guest")
                   ],
                 ),
               ),
@@ -113,18 +99,6 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Center forgotPasswordButton() {
-    return Center(
-      child: TextButton(
-        onPressed: () {},
-        child: customText(
-          "Forgot Password?",
-          CustomColors.textButtonColor,
-        ),
-      ),
-    );
-  }
-
   Center signInButton() {
     return Center(
       child: TextButton(
@@ -144,30 +118,37 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+
+
+
   void signIn() async {
     if (formkey.currentState!.validate()) {
       formkey.currentState!.save();
       try {
         final userResult = await firebaseAuth.signInWithEmailAndPassword(
             email: email, password: password);
-        Navigator.pushReplacementNamed(context, "/homePage");
-        print(userResult.user!.email);
+        var collection = FirebaseFirestore.instance.collection('users');
+        var docSnapshot = await collection.doc(userResult.user!.uid).get();
+        if (docSnapshot.exists) {
+          Map<String, dynamic> data = docSnapshot.data()!;
+          var name = data['role'];
+          if(name == "admin"){
+            Navigator.pushReplacementNamed(context, "/homePage");
+          }else if(name == "employee"){
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Employee(uid: userResult.user!.uid),
+              ),
+            );
+          }
+        }else{
+          //TODO: GİRİLEN KULLANICI BULUNAMADI HATASI VERİLECEK
+        }
       } catch (e) {
         print(e.toString());
       }
     } else {}
-  }
-
-  Center signUpButton() {
-    return Center(
-      child: TextButton(
-        onPressed: () => Navigator.pushNamed(context, "/signUp"),
-        child: customText(
-          "Create new Account",
-          CustomColors.textButtonColor,
-        ),
-      ),
-    );
   }
 
   Container topImageContainer(double height, String topImage) {

@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_creator/pages/auth/login_page.dart';
 import 'package:qr_creator/pages/auth/sign_up_page.dart';
-import 'package:qr_creator/pages/home_page.dart';
+import 'package:qr_creator/pages/admin//home_page.dart';
 import 'package:qr_creator/utils/customColors.dart';
 import 'firebase_options.dart';
 

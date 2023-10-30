@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:qr_creator/utils/customTextStyle.dart';
 import 'package:qr_creator/utils/customColors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -23,6 +22,8 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             userRegisterButton(),
+            qrScannerButton(),
+            xmlBuilderButton(),
           ],
         ),
       ),
@@ -41,6 +42,30 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Center qrScannerButton() {
+    return Center(
+      child: TextButton(
+        onPressed: scanQRCode,
+        child: customText(
+          "Scan QR Code",
+          CustomColors.textButtonColor,
+        ),
+      ),
+    );
+  }
+
+  Center xmlBuilderButton() {
+    return Center(
+      child: TextButton(
+        onPressed: xmlBuilder,
+        child: customText(
+          "Get XML File",
+          CustomColors.textButtonColor,
+        ),
+      ),
+    );
+  }
+
   void userRegister() async {
     Navigator.pushReplacementNamed(context, "/userRegisterPage");
   }
@@ -49,4 +74,20 @@ class _HomePageState extends State<HomePage> {
     text,
     style: TextStyle(color: color),
   );
+
+  void scanQRCode() {
+    Navigator.pushReplacementNamed(context, "/ScannerRedirectPage");
+
+    Widget customText(String text, Color color) => Text(
+      text,
+      style: TextStyle(color: color),);
+  }
+
+  void xmlBuilder() {
+    Navigator.pushReplacementNamed(context, "/xmlBuilderPage");
+
+    Widget customText(String text, Color color) => Text(
+      text,
+      style: TextStyle(color: color),);
+  }
 }
